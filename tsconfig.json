@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "declaration": true,
+    "target": "es2017",
+    "module": "commonjs",
+    "pretty": true,
+    "noEmitOnError": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "removeComments": true,
+    "noUnusedLocals": true,
+    "outDir": "dist",
+    "lib": [
+      "esnext"
+    ],
+    "rootDir": "./src"
+  },
+  "include": [
+    "src"
+  ]
+}

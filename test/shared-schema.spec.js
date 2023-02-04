@@ -302,3 +302,47 @@ test('Should skip route method not passed in routesToApply', async (t) => {
   t.equal(response?.statusCode, 200)
 })
 
+test('Should merge existing with common using response schema prop', async (t) => {
+  t.plan(1)
+  const fastify = new Fastify()
+  await fastify.register(fastifyCommonSchema, {
+    commonSchema: {
+      response: {
+        200: {
+          type: 'object',
+          properties: {
+            value: { type: 'string' },
+            otherValue: { type: 'boolean' }
+          }
+        }
+      }
+    },
+    routesToApply: {
+      "product": ['get', 'post']
+    }
+  })
+  fastify.post('/product', {
+    handler: (req, res) => res.send(42),
+    schema: {
+      body: {
+        type: 'object',
+        properties: {
+          surname: {type: 'string'}
+        }
+      }
+    }}
+  )
+  fastify.get('/product', {
+    handler: (req, res) => res.send(42)}
+  )
+
+  const response = await fastify.inject({
+    method: 'POST',
+    url: '/product',
+    body: {
+      surname: "pippo"
+    }
+  })
+  t.equal(response?.statusCode, 200)
+})
+

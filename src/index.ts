@@ -14,21 +14,20 @@ const fastifyCommonSchema = async function (fastify: FastifyInstance, options) {
     }
 
     fastify.addHook('onRoute', async (routeOptions: RouteOptions) => {
-      try {
-        const routeUrlWithNoPrefix: string = routeOptions.url.replace("/","");
-        const routeMethodLower: string = routeOptions.method.toString().toLowerCase();
+        try {
+            const routeUrlWithNoPrefix: string = routeOptions.url.replace("/","");
+            const routeMethodLower: string = routeOptions.method.toString().toLowerCase();
 
-        if(
-            options.routesToApply[routeUrlWithNoPrefix] &&
-            Array.isArray(options.routesToApply[routeUrlWithNoPrefix]) &&
-            options.routesToApply[routeUrlWithNoPrefix].includes(routeMethodLower)
-        ){
-          routeOptions.schema = mergeDeep(routeOptions.schema || {}, options.commonSchema)
-        }
-        return routeOptions
+            if(
+                options.routesToApply[routeUrlWithNoPrefix] &&
+                Array.isArray(options.routesToApply[routeUrlWithNoPrefix]) &&
+                options.routesToApply[routeUrlWithNoPrefix].includes(routeMethodLower)
+            ){
+              routeOptions.schema = mergeDeep(routeOptions.schema || {}, options.commonSchema)
+            }
+            return routeOptions
       }catch (e){
         //In case of any errors return routeOptions in order to avoid exception in route registration
-        fastify.log.error(e || "Error trying to merge your schemas!");
         return routeOptions
       }
     })

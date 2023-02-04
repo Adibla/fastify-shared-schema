@@ -2,6 +2,7 @@
 
 
 `fastify-shared-schema` is a plugin for the Fastify ecosystem. It lets you share the same parent JSON schema for different routes, in order to avoid repetition and compose your schemas in a modular way.
+You can also use **[ajv-merge-patch](https://github.com/ajv-validator/ajv-merge-patch)** for the same purpose, but with **fastify-shared-schema** you do not have to change your schema syntax
 
 ## Status
 
@@ -24,7 +25,7 @@ async function loader(){
     logger: true
   })
   await fastify.register(fastifySharedSchema, {
-    commonSchema: {
+      baseSchema: {
       body: {
         type: 'object',
         properties: {
@@ -81,7 +82,7 @@ const fastifySharedSchema = require("fastify-shared-schema")
 
 async function loader(){
   await fastify.register(fastifySharedSchema, {
-    commonSchema: {
+    baseSchema: {
       body: {
         type: 'object',
         properties: {
@@ -118,7 +119,7 @@ loader()
 
 
 ## Test
-In order to run unit tests run 
+In order to run unit tests run
 ```shell
 npm run test
 ```

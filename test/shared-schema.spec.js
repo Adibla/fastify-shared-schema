@@ -30,20 +30,7 @@ test('Should exit with error if routesToApply is not passed', async (t) => {
   }
 })
 
-//TODO: TO implement
-// test('Should exit with error if routesToApply has invalid format', async (t) => {
-//   t.plan(1)
-//   const fastify = new Fastify()
-//   try {
-//     await fastify.register(fastifyCommonSchema, {
-//       commonSchema: {}
-//     })
-//   }catch (e){
-//     t.equal(e.message, "You must specify routes in which apply common schema!")
-//   }
-// })
-// TODO: TO implement
-only('Should ignore commonSchema if methods in routesToApply are not list', async (t) => {
+test('Should ignore commonSchema if methods in routesToApply are not list', async (t) => {
   t.plan(1)
   const fastify = new Fastify()
   try {
@@ -78,7 +65,7 @@ only('Should ignore commonSchema if methods in routesToApply are not list', asyn
 
   }
 })
-// TODO: TO implement
+
 test('Should exit with error if commonSchema is empty object', async (t) => {
   t.plan(1)
   const fastify = new Fastify()
@@ -93,7 +80,7 @@ test('Should exit with error if commonSchema is empty object', async (t) => {
     t.equal(e.message, "You must specify common schema (in right format) for your routes!")
   }
 })
-// TODO: TO implement
+
 test('Should exit with error if routesToApply is empty object', async (t) => {
   t.plan(1)
   const fastify = new Fastify()
@@ -188,42 +175,6 @@ test('Should merge existing schema with common schema', async (t) => {
   t.equal(payload?.statusCode, 400)
 })
 
-// only('Should merge existing schema with common schema also with ref', async (t) => {
-//   t.plan(2)
-//   const fastify = new Fastify()
-//   fastify.addSchema({
-//     $id: 'commonSchema',
-//     type: 'object',
-//     properties: {
-//       hello: { type: 'string' }
-//     },
-//   })
-//   await fastify.register(fastifyCommonSchema, {
-//     commonSchema: {
-//       body: { $ref: 'commonSchema#' },
-//       required: ["hello"]
-//     },
-//     routesToApply: {
-//       "product": ['post', 'get', 'patch']
-//     }
-//   })
-//   fastify.post('/product', {
-//     handler: (req, res) => res.send(42)
-//   })
-//
-//   const response = await fastify.inject({
-//     method: 'POST',
-//     url: '/product',
-//     body: {
-//       hello: "smsmsm"
-//     }
-//   })
-//   console.log("poppppppp", response)
-//   const payload = JSON.parse(response.payload);
-//   t.equal(payload?.message, "body must have required property 'name'")
-//   t.equal(payload?.statusCode, 400)
-// })
-
 test('Should skip routes not passed in routesToApply', async (t) => {
   t.plan(1)
   const fastify = new Fastify()
@@ -302,7 +253,7 @@ test('Should skip route method not passed in routesToApply', async (t) => {
   t.equal(response?.statusCode, 200)
 })
 
-test('Should merge existing with common using response schema prop', async (t) => {
+test('Should merge existing with common using response prop in schema', async (t) => {
   t.plan(1)
   const fastify = new Fastify()
   await fastify.register(fastifyCommonSchema, {
@@ -311,7 +262,7 @@ test('Should merge existing with common using response schema prop', async (t) =
         200: {
           type: 'object',
           properties: {
-            value: { type: 'string' },
+            hello: { type: 'string' },
             otherValue: { type: 'boolean' }
           }
         }
@@ -322,7 +273,7 @@ test('Should merge existing with common using response schema prop', async (t) =
     }
   })
   fastify.post('/product', {
-    handler: (req, res) => res.send(42),
+    handler: (req, res) => res.send({hello: "world", notReturned: true}),
     schema: {
       body: {
         type: 'object',
@@ -333,7 +284,7 @@ test('Should merge existing with common using response schema prop', async (t) =
     }}
   )
   fastify.get('/product', {
-    handler: (req, res) => res.send(42)}
+    handler: (req, res) => res.send(true)}
   )
 
   const response = await fastify.inject({
@@ -343,6 +294,40 @@ test('Should merge existing with common using response schema prop', async (t) =
       surname: "pippo"
     }
   })
-  t.equal(response?.statusCode, 200)
+  t.same(JSON.parse(response?.payload), {hello: "world"})
 })
+
+test('Should create schema for route if not exists', async (t) => {
+  t.plan(1)
+  const fastify = new Fastify()
+  await fastify.register(fastifyCommonSchema, {
+    commonSchema: {
+      response: {
+        200: {
+          type: 'object',
+          properties: {
+            hello: { type: 'string' },
+            otherValue: { type: 'boolean' }
+          }
+        }
+      }
+    },
+    routesToApply: {
+      "product": ['get', 'post']
+    }
+  })
+  fastify.post('/product', {
+    handler: (req, res) => res.send({hello: "world", notReturned: true})
+  })
+
+  const response = await fastify.inject({
+    method: 'POST',
+    url: '/product',
+    body: {
+      surname: "pippo"
+    }
+  })
+  t.same(JSON.parse(response?.payload), {hello: "world"})
+})
+
 

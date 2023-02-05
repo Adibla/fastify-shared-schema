@@ -13,6 +13,8 @@ You can also use **[ajv-merge-patch](https://github.com/ajv-validator/ajv-merge-
 ```shell
 npm i fastify-shared-schema
 ```
+## Compatibility
+From Fastify V4 route definition is synchronous, so in order to make this plugin works, you have to register it using **await register(...)**, before V4 it is not necessary.
 
 ## Example
 
@@ -26,13 +28,13 @@ async function loader(){
   })
   await fastify.register(fastifySharedSchema, {
       baseSchema: {
-      body: {
-        type: 'object',
-        properties: {
-          name: {type: 'string'}
-        },
-        required: ["name"]
-      }
+          body: {
+            type: 'object',
+            properties: {
+              name: {type: 'string'}
+            },
+            required: ["name"]
+          }
     },
     routesToApply: {
       "product": ['post', 'get', 'patch']

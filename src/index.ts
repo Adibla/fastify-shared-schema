@@ -1,8 +1,11 @@
-import { fastifyPlugin } from 'fastify-plugin'
-import { isEmptyObject, mergeDeep } from './utils';
-import { FastifyInstance, RouteOptions } from "fastify";
+import { FastifyInstance, HTTPMethods, RouteOptions } from "fastify";
 
-const fastifyCommonSchema = async function (fastify: FastifyInstance, options) {
+import { fastifyPlugin } from 'fastify-plugin'
+
+import { isEmptyObject, mergeDeep } from './utils';
+import { PluginOptions } from "./types/plugin-options";
+
+const fastifyCommonSchema = async function (fastify: FastifyInstance, options: PluginOptions) {
     const isEmptyRoutesToApply: boolean = options.routesToApply && (isEmptyObject(options.routesToApply));
     const isEmptyCommonSchema: boolean = options.commonSchema && (isEmptyObject(options.commonSchema));
 
@@ -16,12 +19,12 @@ const fastifyCommonSchema = async function (fastify: FastifyInstance, options) {
     fastify.addHook('onRoute', async (routeOptions: RouteOptions) => {
         try {
             const routeUrlWithNoPrefix: string = routeOptions.url.replace("/","");
-            const routeMethodLower: string = routeOptions.method.toString().toLowerCase();
-
+            const routeMethod: HTTPMethods | HTTPMethods[] = routeOptions.method;
+            const routeIsIncluded: boolean = !Array.isArray(routeMethod) && options.routesToApply[routeUrlWithNoPrefix].includes(routeMethod);
             if(
                 options.routesToApply[routeUrlWithNoPrefix] &&
                 Array.isArray(options.routesToApply[routeUrlWithNoPrefix]) &&
-                options.routesToApply[routeUrlWithNoPrefix].includes(routeMethodLower)
+                routeIsIncluded
             ){
               routeOptions.schema = mergeDeep(routeOptions.schema || {}, options.commonSchema)
             }

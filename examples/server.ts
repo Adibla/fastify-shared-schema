@@ -16,7 +16,7 @@ async function loader(){
       }
     },
     routesToApply: {
-      "product": ['post', 'get', 'patch']
+      'product': ["POST"]
     }
   });
 

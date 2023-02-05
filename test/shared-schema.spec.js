@@ -10,7 +10,7 @@ test('Should exit with error if commonSchema is not passed', async (t) => {
   try {
     await fastify.register(fastifyCommonSchema, {
       routesToApply: {
-        "product": ['post', 'get', 'patch']
+        "product": ['POST', 'GET', 'PATCH']
       }
     })
   }catch (e){
@@ -73,7 +73,7 @@ test('Should exit with error if commonSchema is empty object', async (t) => {
     await fastify.register(fastifyCommonSchema, {
       commonSchema: {},
       routesToApply: {
-        "product": ['get', 'patch']
+        "product": ['GET', 'PATCH']
       }
     })
   }catch (e){
@@ -120,7 +120,7 @@ test('Should return validation error if common schema is added', async (t) => {
       }
     },
     routesToApply: {
-      "product": ['post', 'get', 'patch']
+      "product": ['POST', 'GET', 'PATCH']
     }
   })
   fastify.post('/product', (req, res) => res.send(42))
@@ -148,7 +148,7 @@ test('Should merge existing schema with common schema', async (t) => {
       }
     },
     routesToApply: {
-      "product": ['post', 'get', 'patch']
+      "product": ['POST', 'GET', 'PATCH']
     }
   })
   fastify.post('/product', {
@@ -189,7 +189,7 @@ test('Should skip routes not passed in routesToApply', async (t) => {
       }
     },
     routesToApply: {
-      "unexisting": ['post', 'get', 'patch']
+      "unexisting": ['POST', 'GET', 'PATCH']
     }
   })
   fastify.post('/product', {
@@ -228,7 +228,7 @@ test('Should skip route method not passed in routesToApply', async (t) => {
       }
     },
     routesToApply: {
-      "product": ['get', 'patch']
+      "product": ['GET', 'PATCH']
     }
   })
   fastify.post('/product', {
@@ -269,7 +269,7 @@ test('Should merge existing with common using response prop in schema', async (t
       }
     },
     routesToApply: {
-      "product": ['get', 'post']
+      "product": ['GET', 'POST']
     }
   })
   fastify.post('/product', {
@@ -313,7 +313,7 @@ test('Should create schema for route if not exists', async (t) => {
       }
     },
     routesToApply: {
-      "product": ['get', 'post']
+      "product": ['GET', 'POST']
     }
   })
   fastify.post('/product', {

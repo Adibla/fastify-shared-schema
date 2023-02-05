@@ -1,23 +1,43 @@
 # fastify-shared-schema
-
-
-`fastify-shared-schema` is a plugin for the Fastify ecosystem. It lets you share the same parent JSON schema for different routes, in order to avoid repetition and compose your schemas in a modular way.
-You can also use **[ajv-merge-patch](https://github.com/ajv-validator/ajv-merge-patch)** for the same purpose, but with **fastify-shared-schema** you do not have to change your schema syntax
+`fastify-shared-schema` is a plugin for the Fastify ecosystem. It allows you to share the same parent JSON schema across different routes to avoid repetition and compose your schemas in a modular way.
+You can also use **[ajv-merge-patch](https://github.com/ajv-validator/ajv-merge-patch)** for the same purpose, but with **fastify-shared-schema** you do not need to change your schema syntax
 
 ## Status
-
-`fastify-shared-schema` is a new project. Please report any issues so we can correct them!
+`fastify-shared-schema` is a new project. Please report any problems so we can fix them!
 
 ## Installation
-
 ```shell
 npm i fastify-shared-schema
 ```
 ## Compatibility
-From Fastify V4 route definition is synchronous, so in order to make this plugin works, you have to register it using **await register(...)**, before V4 it is not necessary.
+From Fastify V4 the route definition is synchronous, for this plugin to work you have to register it with **await register(...)**, before V4 this is not necessary.
+
+## Usage
+To use this plugin, you must register it by passing an object configuration in this format:
+
+```ts
+export type RoutesToApply = {
+    [routeName: string]: HTTPMethods[]
+}
+
+export type PluginOptions = {
+    routesToApply: RoutesToApply,
+    commonSchema: FastifySchema
+}
+```
+
+CommonSchema is the common schema applied to all corresponding routes (only if registered in your fastify instance) present in the routesToApply object
+
+EG
+```ts
+routestToApply: {
+    "product": ['GET', 'POST'],
+    "anotherRoute": ['PATCH']
+}
+```
+
 
 ## Example
-
 ```ts
 import Fastify from 'fastify'
 import fastifySharedSchema from 'fastify-shared-schema'
@@ -121,7 +141,7 @@ loader()
 
 
 ## Test
-In order to run unit tests run
+To run unit tests
 ```shell
 npm run test
 ```

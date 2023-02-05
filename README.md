@@ -27,7 +27,7 @@ async function loader(){
     logger: true
   })
   await fastify.register(fastifySharedSchema, {
-      baseSchema: {
+      commonSchema: {
           body: {
             type: 'object',
             properties: {
@@ -84,7 +84,7 @@ const fastifySharedSchema = require("fastify-shared-schema")
 
 async function loader(){
   await fastify.register(fastifySharedSchema, {
-    baseSchema: {
+    commonSchema: {
       body: {
         type: 'object',
         properties: {
